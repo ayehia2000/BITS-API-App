@@ -22,12 +22,12 @@ namespace BITSBusTimesDataAPI.Controllers
         //private static Dictionary<int, BITSBusTime> mockData = new Dictionary<int, BITSBusTime>();
         // private static Dictionary<int, int, string, int, string> mockDB = new Dictionary<int, BITSBusTime>();
 
-
-        public static int timeSpan = 0; //-72; //Used for simulation
+       // Define range of hours - prior to request - to look for buses
+        public static int timeSpan = -5; //-72; //Used for simulation
 
         public static int totalSeats = 60;
 
-        public static DateTime requestTime = new DateTime(2016, 9, 14, 1, 35, 00);
+        //public static DateTime requestTime = DateTime.UtcNow; // new DateTime(2016, 9, 14, 1, 35, 00);//for debugging
 
         public static CloudStorageAccount storageAccountBITS;
 
@@ -399,7 +399,7 @@ namespace BITSBusTimesDataAPI.Controllers
                 //requestTime = DateTime.UtcNow;
                 // For testing we set requestTime = new DateTime(2016, 9, 14, 1, 35, 00);
 
-                arrivalTimeSec = arrivalTimeSec - (int)(requestTime - line.TimeStarted).TotalSeconds;
+                arrivalTimeSec = arrivalTimeSec - (int)(DateTime.UtcNow - line.TimeStarted).TotalSeconds;
 
                 TimeSpan t = TimeSpan.FromSeconds(arrivalTimeSec);
                 string answer = string.Format("{0:D1} hours and {1:D1} minutes",
