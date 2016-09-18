@@ -15,12 +15,6 @@ namespace BITSBusTimesDataAPI.Controllers
 {
     public class BITSBusTimesController : ApiController
     {
-        // Uncomment following lines for service principal authentication
-        //private static string trustedCallerClientId = ConfigurationManager.AppSettings["todo:TrustedCallerClientId"];
-        //private static string trustedCallerServicePrincipalId = ConfigurationManager.AppSettings["todo:TrustedCallerServicePrincipalId"];
-
-        //private static Dictionary<int, BITSBusTime> mockData = new Dictionary<int, BITSBusTime>();
-        // private static Dictionary<int, int, string, int, string> mockDB = new Dictionary<int, BITSBusTime>();
 
        // Define range of hours - prior to request - to look for buses
         public static int timeSpan = -5; //-72; //Used for simulation
@@ -58,8 +52,6 @@ namespace BITSBusTimesDataAPI.Controllers
             List<Lines> pLinesOrigDest = new List<Lines>();
             List<Lines> pLinesOrig = new List<Lines>();
 
-
-            //System.Diagnostics.Debug.WriteLine(storageAccount.Credentials.KeyName);
 
             // Create the table client.
             CloudTableClient tableClient = storageAccountBITS.CreateCloudTableClient();
@@ -106,8 +98,6 @@ namespace BITSBusTimesDataAPI.Controllers
                     }
                 }
             }
-
-            //Check if dest StopOrder is lower than orig StopOrder ??
 
             // Create the CloudTable object that represents the "BusJourney" table.
             CloudTable transTable = tableClient.GetTableReference("BusJourneyInfo");
@@ -222,77 +212,21 @@ namespace BITSBusTimesDataAPI.Controllers
         public static List<StopLocationEntity> aStops;
         public static int GetTimes(string orig, string dest)
         {
-            // return mockData.Values.Where(m => m.OriginID == orig && m.DestinationID == dist);
             var stopOrig = aStops.Where(a => a.RowKey.Equals(orig)).First();
             var stopDest = aStops.Where(a => a.RowKey.Equals(dest)).First();
 
             int travelTime = CalcTravelTime(stopOrig.Latitude, stopOrig.Longitude,
                                             stopDest.Latitude, stopDest.Longitude);
 
-            //int travelTime = CalcTravelTime("31.2001", "29.9187", "30.0444", "31.2357");
+            //int travelTime = CalcTravelTime("31.2001", "29.9187", "30.0444", "31.2357"); // For debugging
 
             return travelTime;
         }
         static BITSBusTimesController()
         {
-            /*
-            // Retrieve the storage account from the connection string.
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
-                CloudConfigurationManager.GetSetting("StorageConnectionString"));
-
-            System.Diagnostics.Debug.WriteLine(storageAccount.Credentials.KeyName);
-
-            // Create the table client.
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-
-            // Create the CloudTable object that represents the "people" table.
-            CloudTable table = tableClient.GetTableReference("LineStops");
-
-            // Create the table query.
-            TableQuery<LineStopsEntity> rangeQuery = new TableQuery<LineStopsEntity>().Where(
-                    TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, "5555"));
-
-            // Loop through the results, displaying information about the entity.
-            foreach (LineStopsEntity entity in table.ExecuteQuery(rangeQuery))
-            {
-                System.Diagnostics.Debug.WriteLine("{0}, {1}\t{2}\t{3}", entity.PartitionKey, entity.RowKey,
-                    entity.NextStopID);
-            }
-
-            */
-
+            //Put any initialization code here
         }
 
-        //private static void CheckCallerId()
-        //{
-            // Uncomment following lines for service principal authentication
-            //string currentCallerClientId = ClaimsPrincipal.Current.FindFirst("appid").Value;
-            //string currentCallerServicePrincipalId = ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
-            //if (currentCallerClientId != trustedCallerClientId || currentCallerServicePrincipalId != trustedCallerServicePrincipalId)
-            //{
-            //    throw new HttpResponseException(new HttpResponseMessage { StatusCode = HttpStatusCode.Unauthorized, ReasonPhrase = "The appID or service principal ID is not the expected value." });
-            //}
-        //}
-        /*
-        private static int CalcTravelTime (string olng, string olat, string dlng, string dlat)
-        {
-          
-            var requestUri = string.Format("https://maps.googleapis.com/maps/api/distancematrix/xml?origins=" +
-            olng + "," + olat + "&destinations=" + dlng + "," + dlat + "&key=AIzaSyDx9OepXgiWTUy-3pnH00y-obS71q3b_A4");
-
-            var request = WebRequest.Create(requestUri);
-            var response = request.GetResponse();
-            var xdoc = XDocument.Load(response.GetResponseStream());
-
-            var result = xdoc.Element("DistanceMatrixResponse").Element("row").Element("element");
-            var duration = result.Element("duration");
-            var sec = Convert.ToInt16(duration.Element("value").Value);
-            var str = duration.Element("text").Value;
-            return sec;
-        }
-        */
-        // GET: api/ToDoItemList
-        //public IEnumerable<BITSBusTime> Get(int orig, int dist)
         public List<BITSBusTime> Get(int orig, int dest)
         {
             System.Diagnostics.Debug.WriteLine("Bus ITS Monitor\n");
@@ -395,7 +329,6 @@ namespace BITSBusTimesDataAPI.Controllers
                 }
 
                 //Deduct time consumed from leaving last stop till this second, just before sending to user
-
                 //requestTime = DateTime.UtcNow;
                 // For testing we set requestTime = new DateTime(2016, 9, 14, 1, 35, 00);
 
@@ -421,58 +354,10 @@ namespace BITSBusTimesDataAPI.Controllers
                        new JsonConverter[] { new StringEnumConverter() });
 
             System.Diagnostics.Debug.WriteLine(jsonString);
-            //Console.Read();
 
             return requestBITS;
 
-            //CheckCallerId();
-
-            // return mockData.Values.Where(m => m.OriginID == orig && m.DestinationID == dist);
-            /*
-            int travelTime = CalcTravelTime("31.2001", "29.9187", "30.0444", "31.2357");
-
-            TimeSpan t = TimeSpan.FromSeconds(travelTime);
-
-            string answer = string.Format("{0:D1} hours and {1:D1} minutes",
-                            t.Hours,
-                            t.Minutes);
-
-            return answer; */
         }
-
-        // GET: api/ToDoItemList/5
-    //    public IEnumerable<BITSBusTime> GetById(int orig, int dist)
-    //    {
-    //        CheckCallerId();
-    //
-    //        return mockData.Values.Where(m => m.OriginID == orig && m.DestinationID == dist);
-    //    }
-
-        // POST: api/ToDoItemList
-
-
-     //   public void Put(BITSBusTime BusTime)
-     //   {
-     //       CheckCallerId();
-     //
-     //       BITSBusTime xBusTime = mockData.Values.First(a => (a.TravelTime == BusTime.TravelTime || BusTime.TravelTime == "*") && a.OriginID == BusTime.OriginID);
-     //       if (BusTime != null && xBusTime != null)
-     //       {
-     //           xBusTime.ArrivalTime = BusTime.ArrivalTime;
-     //       }
-     //   }
-
-        // DELETE: api/ToDoItemList/5
-     //   public void Delete(int orig, int dest)
-     //   {
-     //       CheckCallerId();
-     //
-     //       BITSBusTime BusTime = mockData.Values.First(a => (a.TravelTime == owner || owner == "*") && a.OriginID == dest);
-     //       if (BusTime != null)
-     //       {
-     //           mockData.Remove(BusTime.OriginID);
-     //       }
-     //   }
 
     }
 }
