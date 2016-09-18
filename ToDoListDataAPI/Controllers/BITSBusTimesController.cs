@@ -196,7 +196,7 @@ namespace BITSBusTimesDataAPI.Controllers
         {
 
             var requestUri = string.Format("https://maps.googleapis.com/maps/api/distancematrix/xml?origins=" +
-            olng + "," + olat + "&destinations=" + dlng + "," + dlat + "&key=AIzaSyDx9OepXgiWTUy-3pnH00y-obS71q3b_A4");
+            olng + "," + olat + "&destinations=" + dlng + "," + dlat + "&key=/*Key Is Hidden*/");
 
             var request = WebRequest.Create(requestUri);
             var response = request.GetResponse();
